@@ -1,13 +1,13 @@
-import './App.css';
+import '../App.css';
 
 import React from 'react';
 
-import { Authorisation } from './features/authorisation/Authorisation';
-import { Counter } from './features/counter/Counter';
-import { SpotifyExample } from './features/spotifyExample/SpotifyExample';
-import logo from './logo.svg';
+import logo from '../logo.svg';
+import { Authorisation } from './authorisation/Authorisation';
+import { Counter } from './counter/Counter';
+import { SpotifyExample } from './spotifyExample/SpotifyExample';
 
-function App() {
+export function Home() {
   return (
     <div className="App">
       <header className="App-header">
@@ -61,4 +61,3 @@ function App() {
   );
 }
 
-export default App;
