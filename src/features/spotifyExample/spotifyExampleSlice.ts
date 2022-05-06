@@ -11,12 +11,14 @@ import { setLoggedIn } from '../authorisation/authorisationSlice';
 
 interface SpotifyExampleState {
   displayName: string,
-  product: string
+  product: string,
+  topTracks: any[]
 }
 
 const initialState: SpotifyExampleState = {
   displayName: '',
   product: '',
+  topTracks: []
 };
 
 export const spotifyExampleSlice = createSlice({
@@ -29,13 +31,17 @@ export const spotifyExampleSlice = createSlice({
     setProduct: (state, action: PayloadAction<string>) => {
       state.product = action.payload;
     },
+    setTopTracks: (state, action: PayloadAction<any[]>) => {
+      state.topTracks = action.payload;
+    }
   },
 });
 
-export const { setDisplayName, setProduct } = spotifyExampleSlice.actions;
+export const { setDisplayName, setProduct, setTopTracks } = spotifyExampleSlice.actions;
 
 export const selectDisplayName = (state: RootState) => state.spotifyExample.displayName;
 export const selectProduct = (state: RootState) => state.spotifyExample.product;
+export const selectTopTracks = (state: RootState) => state.spotifyExample.topTracks;
 
 export const setUserProfileAsync = (accessToken: string): AppThunk => dispatch => {
   const myHeaders = new Headers();
@@ -59,4 +65,24 @@ export const setUserProfileAsync = (accessToken: string): AppThunk => dispatch =
     });
 };
 
+export const setUsersTopTracksAsync = (accessToken: string): AppThunk => dispatch => {
+  const myHeaders = new Headers();
+  myHeaders.append('Authorization', 'Bearer ' + accessToken);
+
+  fetch('https://api.spotify.com/v1/me/top/tracks', {
+    method: 'GET',
+    headers: myHeaders,
+  }).then(response => response.json())
+    .then((data) => {
+      console.log(data);
+      dispatch(setTopTracks(data.items));
+    }).catch((error) => {
+      console.log(error);
+      if (error instanceof XMLHttpRequest) {
+        if (error.status === 401) {
+          dispatch(setLoggedIn(false));
+        }
+      }
+    });
+};
 export default spotifyExampleSlice.reducer;
